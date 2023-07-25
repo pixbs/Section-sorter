@@ -3,9 +3,7 @@ const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useWidgetId, Inp
 
 
 const arrowLeftSrc = `
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M20.7071 16L20.3536 15.6465L17.3536 12.6465L16.6464 13.3536L18.7929 15.5L10.5 15.5L10.5 16.5L18.7929 16.5L16.6464 18.6465L17.3536 19.3536L20.3536 16.3536L20.7071 16Z" fill="black"/>
-</svg>
+<svg width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="m20.707 16-.353-.354-3-3-.708.708 2.147 2.146H10.5v1h8.293l-2.147 2.146.708.708 3-3 .353-.354Z" fill="#000"/></svg>
 `
 const arrowDownSrc = `
 <svg width="33" height="32" viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,204 +46,28 @@ const instanceSrc = `
 </svg>
 `
 
-//widget attributes
-let widgetId : string
-let widgetNode : WidgetNode
-let parentNode : BaseNode
-let parentName : string = "Press update button to change this headline"
-let baseWidgetWidth : number | "hug-contents" = 500
-let headlineWidgetWidth : "fill-parent" | "hug-contents" = "fill-parent"
-let nudge = "16"
+
+function Widget(){
 
 
-// stats
-let sectionAmount = 0
-let frameAmount = 0
-let groupAmount = 0
-let componentAmount = 0
-let InstanceAmount = 0
-
-function Widget() {
-  widgetId = useWidgetId()
-  const [widgetWidth, setWidgetWidth] = useSyncedState("widgetWidth", baseWidgetWidth)
-  const [headlineWidth, setHeadlineWidth] = useSyncedState("headlineWdith", headlineWidgetWidth)
-  
-  function Headline() {
-    const [sortDirection, setSortDirection] = useSyncedState("direction", "horizontal")
-    const [text, setText] = useSyncedState("text", 16)
-    //const [rotation, setRotation] = useSyncedState("direction", 90)
-  
-    function directionToColor(direction : "horizontal" | "vertical") {
-      if(direction != sortDirection){
-        return "#fff"
-      }
-      return "#f6f6f6"
-    }
-  
-    return (
-      <AutoLayout name="headline"
-      spacing={8}
-      width={headlineWidth}
-      >
-        <Text name="headline-text"
-        fontSize={26}
-        fontWeight={700}
-        width={headlineWidth}
-        >
-          {parentName}
-        </Text>
-        <AutoLayout name="direction"
-        cornerRadius={2}
-        stroke="#E6E6E6"
-        >
-          <SVG src={arrowLeftSrc} 
-            fill={directionToColor("horizontal")}
-            onClick={() => {
-              setSortDirection("horizontal")
-              //setRotation(90)
-            }}
-          />
-          <SVG src={arrowDownSrc}
-          fill={directionToColor("vertical")}
-          onClick={() => {
-            setSortDirection("vertical")
-            //setRotation(0)
-          }}
-          />
-        </AutoLayout>
-        <AutoLayout name="input-wrapper"
-        cornerRadius={2}
-        stroke="#E6E6E6"
-        >
-          <SVG name="direction-icon"
-          src={verticalAlignSrc}
-          rotation={90}
-          />
-          <Input
-          onTextEditEnd={(e) => {
-            if (Number(e.characters) >= 0) {
-              setText(parseInt(e.characters))
-            }
-          }}
-          placeholder={"edit me"}
-          value={String(text)}
-          width={48}
-          fontSize={11}
-          verticalAlignText="center"
-          height={"fill-parent"}
-          />
-        </AutoLayout>
-        <AutoLayout name="update-button-wrapper"
-        cornerRadius={2}
-        stroke="#E6E6E6"
-        >          
-        <SVG name="update-button" 
-        src={updateSrc}
-        tooltip="Update sorting"
-        onClick={() => {Update()}}
-        />
-        </AutoLayout>
-      </AutoLayout>
-    )
-  }
-  
-  function Update(){
-    widgetNode = figma.getNodeById(widgetId) as WidgetNode;
-    if (widgetNode == null || widgetNode.parent == null ){
-      return
-    }
-    parentNode = widgetNode.parent
-    parentName = parentNode.name
-    baseWidgetWidth = 475
-  
-    //optimize that in future
-    if(parentNode.type === "PAGE" || parentNode.type === "SECTION" || parentNode.type === "FRAME"){
-      sectionAmount = parentNode.findChildren(n => n.type === "SECTION").length
-      frameAmount = parentNode.findChildren(n => n.type === "FRAME").length
-      groupAmount = parentNode.findChildren(n => n.type === "GROUP").length
-      componentAmount = parentNode.findChildren(n => n.type === "COMPONENT").length
-      InstanceAmount = parentNode.findChildren(n => n.type === "INSTANCE").length
-    }
-  
-    if(parentNode.type !== "SECTION"){
-      setWidgetWidth("hug-contents")
-      return
-    }
-    widgetNode.x = 8
-    widgetNode.y = 8
-    
-    const yOffset = widgetNode.height + widgetNode.y + 16
-    
-    Sort(parentNode, 16, yOffset)
-    setWidgetWidth(parentNode.width - 16)
-  }
-  
-  function Stats() {
-    return (
-      <AutoLayout name="stats"
-        spacing={16}
-        width={"hug-contents"}
-        >
-          {Stat(sectionSrc,"Section",sectionAmount)}
-          {Stat(frameSrc,"Frame",frameAmount)}
-          {Stat(groupSrc,"Group",groupAmount)}
-          {Stat(componentSrc,"Component",componentAmount)}
-          {Stat(instanceSrc,"Instance",InstanceAmount)}
-        </AutoLayout>
-    )
-  }
-  
-  function Stat(svgSrc: string, label : string, number : number){
-    if(number == 0){
-      //return
-    }
-    return (
-      <AutoLayout name={label}
-      spacing={4}>
-        <SVG src={svgSrc}/>
-        <Text
-        fontSize={11}
-        >
-          {label}: {number}
-        </Text>
+/////////// Controls ///////////
+  function Controls(){
+    return(
+      <AutoLayout name="controls">
+        <SVG src={arrowLeftSrc} fill="#ff0000"/>
+        <SVG src={arrowDownSrc} fill="#ff0000"/>
+        <SVG src={updateSrc} fill="#ff0000"/>
       </AutoLayout>
     )
   }
 
-  return (
-    <AutoLayout name="body"
-    direction="vertical"
-    fill="#fff"
-    width={widgetWidth}
-    cornerRadius={8} // let's do in future corner radius as parent corner radious
-    padding={16}
-    spacing={12}
-    >
-      {Headline()}
-      {Stats()}
-      
+////////// Return ///////////
+  return(
+    <AutoLayout name="body">
+      {Controls()}
     </AutoLayout>
   )
 }
 
-function Sort(node : SectionNode, nudge: number, yOffset = 0){
-  const nodeChildren = node.findChildren(n => n.type === ("FRAME"||"SECTION")) as SceneNode[]
-  let max_x = nudge
-  let max_y = nudge
-  for(const node of nodeChildren){
-    node.x = max_x
-    node.y = yOffset
-    
-    max_x += node.width + nudge
-    var nodeTotalHeight = node.height+node.y+nudge
-    if(nodeTotalHeight > max_y){
-      max_y = nodeTotalHeight
-    }
-  }
-  node.resizeWithoutConstraints(max_x, max_y)
-
-}
-
-
-  widget.register(Widget)
+widget.register(Widget)
   
