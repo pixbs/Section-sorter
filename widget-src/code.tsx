@@ -3,10 +3,20 @@ const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useWidgetId, Inp
 
 function Widget(){
   
-  /////////// Icons ///////////
 
-  const [colorPrimarySrc, setColorPrimarySrc] = useSyncedState("colorPrimarySrc", `"#333"`)
   
+  /////////// Variables ///////////
+  const [nudgeNumber, setNudgeNumber] = useSyncedState("nudgeNumber", 16)
+  const [theme, setTheme] = useSyncedState("theme", "Light")
+  const [colorPrimary, setColorPrimary] = useSyncedState("colorPrimary", "#333")
+  const [colorSecondary, setColorSecondary] = useSyncedState("colorSecondary", "#E6E6E6")
+  const [colorBackground, setColorBackground] = useSyncedState("colorBackground", "#FFF")
+  const [colorPrimarySrc, setColorPrimarySrc] = useSyncedState("colorPrimarySrc", `"#333"`)
+  const [sortDirection, setSortDirection] = useSyncedState("sortDirection", "Vertical")
+
+  const widgetId = useWidgetId()
+
+  /////////// Icons ///////////
   const arrowLeftSrc = `
   <svg width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path fill-rule="evenodd" clip-rule="evenodd" d="m20.707 16-.353-.354-3-3-.708.708 2.147 2.146H10.5v1h8.293l-2.147 2.146.708.708 3-3 .353-.354Z" fill=${colorPrimarySrc}/>
@@ -52,12 +62,6 @@ function Widget(){
   <path fill-rule="evenodd" clip-rule="evenodd" d="m1.828 8 .336-.336 5.5-5.5L8 1.828l.336.336 5.5 5.5.336.336-.336.336-5.5 5.5-.336.336-.336-.336-5.5-5.5L1.828 8ZM8 12.828 12.828 8 8 3.172 3.172 8 8 12.828Z" fill=${colorPrimarySrc}/>
   </svg>
   `
-  /////////// Variables ///////////
-  const [nudgeNumber, setNudgeNumber] = useSyncedState("nudgeNumber", 16)
-  const [theme, setTheme] = useSyncedState("theme", "light")
-  const [colorPrimary, setColorPrimary] = useSyncedState("colorPrimary", "#333")
-  const [colorSecondary, setColorSecondary] = useSyncedState("colorSecondary", "#E6E6E6")
-  const [colorBackground, setColorBackground] = useSyncedState("colorBackground", "#FFF")
   
   /////////// Controls ///////////
   function Controls(){
@@ -69,14 +73,25 @@ function Widget(){
           cornerRadius={2}
           stroke={colorSecondary}
         >
-          <SVG src={arrowLeftSrc}/>
-          <SVG src={arrowDownSrc}/>
+          <SVG src={arrowLeftSrc}
+            fill={getDirectionColor("Horizontal")}
+            tooltip="Sort horizontally"
+            onClick={() => {setSortDirection("Horizontal")}}
+            />
+          <SVG src={arrowDownSrc}
+            fill={getDirectionColor("Vertical")}
+            tooltip="Sort vertically"
+            onClick={() => {setSortDirection("Vertical")}} 
+            />
         </AutoLayout>
         <AutoLayout name="wrapper"
           cornerRadius={2}
           stroke={colorSecondary}
+          tooltip={sortDirection + " gap between items"}
         >          
-          <SVG src={verticalAlignSrc}/>
+          <SVG src={verticalAlignSrc}
+          rotation={getDirectionRotation()}
+          />
           <Input
             value={String(nudgeNumber)}
             width={48}
@@ -95,6 +110,10 @@ function Widget(){
         <AutoLayout name="wrapper"
           cornerRadius={2}
           stroke={colorSecondary}
+          tooltip="Update"
+          onClick={() => {
+            sort()
+          }}
         >
           <SVG src={updateSrc}/>
         </AutoLayout>
@@ -102,11 +121,11 @@ function Widget(){
     )
   }
   ////////// Property menu ///////////
-  const themeOptions = [{option: "light", label: "Light"}, {option: "dark", label: "Dark"}]
+  const themeOptions = [{option: "Light", label: "Light"}, {option: "Dark", label: "Dark"}]
   usePropertyMenu(
     [
       {
-        itemType: 'dropdown',
+        itemType: "dropdown",
         propertyName: 'theme',
         tooltip: 'Select theme',
         selectedOption: theme,
@@ -115,36 +134,84 @@ function Widget(){
     ],
     ({propertyName, propertyValue}) => {
       if (propertyName === "theme") {
-        if(propertyValue === "light"){
+        if(propertyValue === "Light"){
           setColorPrimary("#333333")
           setColorSecondary("#E6E6E6")
           setColorBackground("#FFFFFF")
           setColorPrimarySrc(`"#333"`)
         }
-        if(propertyValue === "dark"){
+        if(propertyValue === "Dark"){
           setColorPrimary("#FFFFFF")
-          setColorSecondary("#444444")
-          setColorBackground("#2C2C2C")
+          setColorSecondary("#535353")
+          setColorBackground("#404040")
           setColorPrimarySrc(`"#FFF"`)
         }
         setTheme(propertyValue!)
       }
     }
   )
+
+  ////////// Sort Direction ///////////
+
+  function getDirectionColor(direction: "Vertical" | "Horizontal") {
+    if(direction != sortDirection){
+      return colorBackground
+    }
+    return colorSecondary
+  }
+
+  function getDirectionRotation() {
+    if(sortDirection === "Horizontal"){
+      return 90
+    }
+    return 0
+  }
+
   ////////// Return ///////////
-    return(
-      <AutoLayout name="body"
-        fill={colorBackground}
-        stroke={colorSecondary}
-        spacing={16}
-        padding={16}
-        cornerRadius={8}
-        direction="horizontal"
-      >
-        {Controls()}
-      </AutoLayout>
+  return(
+    <AutoLayout name="body"
+      fill={colorBackground}
+      stroke={colorSecondary}
+      spacing={16}
+      padding={16}
+      cornerRadius={8}
+    >
+      {Controls()}
+    </AutoLayout>
     )
+  ////////// Sort ///////////
+  function sort() {
+    var widgetNode = figma.getNodeById(widgetId) as WidgetNode;
+    var parentNode = widgetNode.parent
+    if (widgetNode == null || parentNode == null ){
+      return
+    }
+    widgetNode.x = 0 ; widgetNode.y = 0
+    const children = parentNode.findChildren(n => n.type === "FRAME" || n.type === "GROUP" || n.type === "STICKY")
+    let offsetY = widgetNode.height + 16 + nudgeNumber
+    let x = nudgeNumber
+    let y = offsetY
+    let maxX = 0
+    let maxY = 0
+    switch (sortDirection) {
+      case "Horizontal":
+        for(const child of children){
+          child.x = x
+          child.y = y
+          x += child.width + nudgeNumber
+          const totalHeight = child.height + child.y
+          if (totalHeight > maxY) {
+            maxY = totalHeight
+          } 
+        }
+        break
+      case "Vertical":
+        break
+    }
+  }
 }
+
+
 
 widget.register(Widget)
   
