@@ -1,7 +1,7 @@
 {
   "name": "section-sorter",
   "version": "1.0.0",
-  "description": "Your Figma widget",
+  "description": "Simple figma widget, that help to organise elements inside section, or page",
   "scripts": {
     "build": "esbuild widget-src/code.tsx --bundle --outfile=dist/code.js --target=es6",
     "tsc": "tsc --noEmit -p widget-src",
