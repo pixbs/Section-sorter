@@ -13,6 +13,8 @@ function Widget(){
   const [colorBackground, setColorBackground] = useSyncedState("colorBackground", "#FFF")
   const [colorPrimarySrc, setColorPrimarySrc] = useSyncedState("colorPrimarySrc", `"#333"`)
   const [sortDirection, setSortDirection] = useSyncedState("sortDirection", "Vertical")
+  const [showControls, setShowControls] = useSyncedState("showControls", false)
+  const bodyPadding = {true: 0, false: 16}
 
   const widgetId = useWidgetId()
 
@@ -62,6 +64,19 @@ function Widget(){
   <path fill-rule="evenodd" clip-rule="evenodd" d="m1.828 8 .336-.336 5.5-5.5L8 1.828l.336.336 5.5 5.5.336.336-.336.336-5.5 5.5-.336.336-.336-.336-5.5-5.5L1.828 8ZM8 12.828 12.828 8 8 3.172 3.172 8 8 12.828Z" fill=${colorPrimarySrc}/>
   </svg>
   `
+
+  const hideSrc = {
+    true: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+    <path fill="#fff" fill-opacity=".8" fill-rule="evenodd" d="M13.5 7.8A8 8 0 0 0 15 6h-1.2A7 7 0 0 1 2.3 6H1a8 8 0 0 0 1.4 1.8L.9 9.4l.7.7 1.7-1.7a8 8 0 0 0 2.3 1.2L5 12l1 .2.6-2.2a8 8 0 0 0 2.8 0L10 12l1-.2-.6-2.3a8 8 0 0 0 2.3-1.2l1.7 1.7.7-.7-1.6-1.6Z" clip-rule="evenodd"/>
+    </svg>
+    `,
+    false: `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+    <path fill="#fff" fill-rule="evenodd" d="M8 11a6.5 6.5 0 0 1-5.5-3 6.5 6.5 0 0 1 11 0A6.5 6.5 0 0 1 8 11Zm0-7c2.9 0 5.4 1.6 6.6 4A7.5 7.5 0 0 1 1.4 8C2.6 5.6 5 4 8 4Zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" clip-rule="evenodd"/>
+    </svg>
+    `
+  }
   
   /////////// Controls ///////////
   function Controls(){
@@ -72,6 +87,7 @@ function Widget(){
         <AutoLayout name="wrapper"
           cornerRadius={2}
           stroke={colorSecondary}
+          hidden={showControls}
         >
           <SVG src={arrowLeftSrc}
             fill={getDirectionColor("Horizontal")}
@@ -87,6 +103,7 @@ function Widget(){
         <AutoLayout name="wrapper"
           cornerRadius={2}
           stroke={colorSecondary}
+          hidden={showControls}
           tooltip={sortDirection + " gap between items"}
         >          
           <SVG src={verticalAlignSrc}
@@ -122,6 +139,7 @@ function Widget(){
   }
   ////////// Property menu ///////////
   const themeOptions = [{option: "Light", label: "Light"}, {option: "Dark", label: "Dark"}]
+  const controlsTooltips = {true: "Show controls", false: "Hide controls"}
   usePropertyMenu(
     [
       {
@@ -130,6 +148,16 @@ function Widget(){
         tooltip: 'Select theme',
         selectedOption: theme,
         options: themeOptions
+      },
+      {
+        itemType: "separator"
+      },
+      {
+        itemType: "toggle",
+        propertyName: "controls",
+        icon: hideSrc[showControls as unknown as keyof typeof hideSrc],
+        tooltip: controlsTooltips[showControls as unknown as keyof typeof controlsTooltips],
+        isToggled: showControls,
       }
     ],
     ({propertyName, propertyValue}) => {
@@ -147,6 +175,9 @@ function Widget(){
           setColorPrimarySrc(`"#FFF"`)
         }
         setTheme(propertyValue!)
+      }
+      else if (propertyName === "controls"){
+        setShowControls(!showControls)
       }
     }
   )
@@ -173,7 +204,7 @@ function Widget(){
       fill={colorBackground}
       stroke={colorSecondary}
       spacing={16}
-      padding={16}
+      padding={bodyPadding[showControls as unknown as keyof typeof bodyPadding]}
       cornerRadius={8}
     >
       {Controls()}
@@ -186,27 +217,39 @@ function Widget(){
     if (widgetNode == null || parentNode == null ){
       return
     }
-    widgetNode.x = 0 ; widgetNode.y = 0
-    const children = parentNode.findChildren(n => n.type === "FRAME" || n.type === "GROUP" || n.type === "STICKY")
-    let offsetY = widgetNode.height + 16 + nudgeNumber
+
+    widgetNode.x = nudgeNumber ; widgetNode.y = nudgeNumber
+    const children = parentNode.findChildren(n => n.type === "FRAME" || n.type === "GROUP" || n.type === "SECTION" || n.type === "STICKY" || n.type === "COMPONENT" || n.type === "COMPONENT_SET")
+    let offsetY = widgetNode.height + (nudgeNumber*2)
     let x = nudgeNumber
     let y = offsetY
-    let maxX = 0
-    let maxY = 0
-    switch (sortDirection) {
-      case "Horizontal":
-        for(const child of children){
-          child.x = x
-          child.y = y
-          x += child.width + nudgeNumber
+    let maxX = widgetNode.width + widgetNode.x
+    let maxY = widgetNode.height + widgetNode.y
+
+    for(const child of children){
+      child.x = x
+      child.y = y
+      switch (sortDirection) {
+        case "Horizontal":
+            x += child.width + nudgeNumber
+            break
+          case "Vertical":
+            y += child.height + nudgeNumber
+            break
+          }
+          const totalWidth = child.width + child.x
+          if (totalWidth > maxX) {
+            maxX = totalWidth
+          }
           const totalHeight = child.height + child.y
           if (totalHeight > maxY) {
             maxY = totalHeight
           } 
-        }
-        break
-      case "Vertical":
-        break
+
+    }
+    // After sorting
+    if(parentNode.type === "SECTION" || parentNode.type === "FRAME"){
+      parentNode.resizeWithoutConstraints(maxX + nudgeNumber,maxY + nudgeNumber)
     }
   }
 }
