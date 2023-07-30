@@ -219,7 +219,7 @@ function Widget(){
     }
 
     widgetNode.x = nudgeNumber ; widgetNode.y = nudgeNumber
-    const children = parentNode.findChildren(n => n.type === "FRAME" || n.type === "GROUP" || n.type === "SECTION" || n.type === "STICKY" || n.type === "COMPONENT" || n.type === "COMPONENT_SET")
+    const children = parentNode.findChildren(n => n.type === "FRAME" || n.type === "GROUP" || n.type === "SECTION" || n.type === "STICKY" || n.type === "COMPONENT" || n.type === "COMPONENT_SET").reverse()
     let offsetY = widgetNode.height + (nudgeNumber*2)
     let x = nudgeNumber
     let y = offsetY
