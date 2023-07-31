@@ -15,7 +15,7 @@ function Widget(){
   const [colorPrimarySrc, setColorPrimarySrc] = useSyncedState("colorPrimarySrc", `"#333"`)
   const [sortDirection, setSortDirection] = useSyncedState("sortDirection", "Vertical")
   const [showControls, setShowControls] = useSyncedState("showControls", false)
-  const [rem,setRem] = useSyncedState("rem", 32)
+  const [rem,setRem] = useSyncedState("rem", 16)
   const bodyPadding = {true: 0, false: rem}
 
   const widgetId = useWidgetId()
