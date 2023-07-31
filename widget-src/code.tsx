@@ -8,13 +8,15 @@ function Widget(){
   /////////// Variables ///////////
   const [nudgeNumber, setNudgeNumber] = useSyncedState("nudgeNumber", 16)
   const [theme, setTheme] = useSyncedState("theme", "Light")
+  const [selectedSize, setSelectedSize] = useSyncedState("selectedSize", "small")
   const [colorPrimary, setColorPrimary] = useSyncedState("colorPrimary", "#333")
   const [colorSecondary, setColorSecondary] = useSyncedState("colorSecondary", "#E6E6E6")
   const [colorBackground, setColorBackground] = useSyncedState("colorBackground", "#FFF")
   const [colorPrimarySrc, setColorPrimarySrc] = useSyncedState("colorPrimarySrc", `"#333"`)
   const [sortDirection, setSortDirection] = useSyncedState("sortDirection", "Vertical")
   const [showControls, setShowControls] = useSyncedState("showControls", false)
-  const bodyPadding = {true: 0, false: 16}
+  const [rem,setRem] = useSyncedState("rem", 32)
+  const bodyPadding = {true: 0, false: rem}
 
   const widgetId = useWidgetId()
 
@@ -82,10 +84,10 @@ function Widget(){
   function Controls(){
     return(
       <AutoLayout name="controls"
-      spacing={8}
+      spacing={rem/2}
       >
         <AutoLayout name="wrapper"
-          cornerRadius={2}
+          cornerRadius={rem/8}
           stroke={colorSecondary}
           hidden={showControls}
         >
@@ -93,27 +95,33 @@ function Widget(){
             fill={getDirectionColor("Horizontal")}
             tooltip="Sort horizontally"
             onClick={() => {setSortDirection("Horizontal")}}
+            width={rem*2}
+            height={rem*2}
             />
           <SVG src={arrowDownSrc}
             fill={getDirectionColor("Vertical")}
             tooltip="Sort vertically"
-            onClick={() => {setSortDirection("Vertical")}} 
+            onClick={() => {setSortDirection("Vertical")}}
+            width={rem*2}
+            height={rem*2}
             />
         </AutoLayout>
         <AutoLayout name="wrapper"
-          cornerRadius={2}
+          cornerRadius={rem/8}
           stroke={colorSecondary}
           hidden={showControls}
           tooltip={sortDirection + " gap between items"}
         >          
           <SVG src={verticalAlignSrc}
           rotation={getDirectionRotation()}
+          width={rem*2}
+          height={rem*2}
           />
           <Input
             value={String(nudgeNumber)}
-            width={48}
+            width={rem*3}
             fill={colorPrimary}
-            fontSize={11}
+            fontSize={rem/1.3}
             verticalAlignText="center"
             height="fill-parent"
             onTextEditEnd={(e) => {
@@ -125,23 +133,34 @@ function Widget(){
           />
         </AutoLayout>
         <AutoLayout name="wrapper"
-          cornerRadius={2}
+          cornerRadius={rem/8}
           stroke={colorSecondary}
           tooltip="Update"
           onClick={() => {
             sort()
           }}
         >
-          <SVG src={updateSrc}/>
+          <SVG src={updateSrc}
+          width={rem*2}
+          height={rem*2}
+          />
         </AutoLayout>
       </AutoLayout>
     )
   }
   ////////// Property menu ///////////
   const themeOptions = [{option: "Light", label: "Light"}, {option: "Dark", label: "Dark"}]
+  const sizeOptions = [{option: "small", label: "Small"}, {option: "medium", label: "Medium"}, {option: "large", label: "Large"}]
   const controlsTooltips = {true: "Show controls", false: "Hide controls"}
   usePropertyMenu(
     [
+      {
+        itemType: "dropdown",
+        propertyName: "size",
+        tooltip: 'Select size',
+        selectedOption: selectedSize,
+        options: sizeOptions
+      },
       {
         itemType: "dropdown",
         propertyName: 'theme',
@@ -179,6 +198,20 @@ function Widget(){
       else if (propertyName === "controls"){
         setShowControls(!showControls)
       }
+      else if (propertyName === "size" && typeof propertyValue === "string"){
+        setSelectedSize(propertyValue)
+        switch(propertyValue){
+          case 'small':
+            setRem(16)
+            break
+          case 'medium':
+            setRem(32)
+            break
+          case 'large':
+            setRem(48)
+            break
+        }
+      }
     }
   )
 
@@ -203,9 +236,9 @@ function Widget(){
     <AutoLayout name="body"
       fill={colorBackground}
       stroke={colorSecondary}
-      spacing={16}
+      spacing={rem}
       padding={bodyPadding[showControls as unknown as keyof typeof bodyPadding]}
-      cornerRadius={8}
+      cornerRadius={rem/2}
     >
       {Controls()}
     </AutoLayout>
