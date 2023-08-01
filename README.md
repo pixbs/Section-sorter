@@ -1,5 +1,8 @@
 ![Cover](https://github.com/pixbs/Section-sorter/blob/076af8551f053abae5655bc0482d802b912afedf/cover.png)
 
+[Figma community page](https://www.figma.com/community/widget/1266982200624439011/Section-sorter)
+-
+
 Section sorter
 =
 A simple widget for Figma(mainly) and FigJam to align your layers (auto-layout-like) inside your pages/sections/frames
