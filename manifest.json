@@ -6,7 +6,8 @@
   "capabilities": [],
   "enableProposedApi": false,
   "editorType": [
-    "figma"
+    "figma",
+    "figjam"
   ],
   "containsWidget": true,
   "widgetApi": "1.0.0",
