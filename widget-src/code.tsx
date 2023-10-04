@@ -11,11 +11,12 @@ function Widget() {
   const [theme] = useSyncedState<theme>("theme", lightTheme)
   const [unit] = useSyncedState<number>("unit", 8)
 
-  const widgetStyles : AutoLayoutProps = {
+  const style : AutoLayoutProps = {
     //Properties
     name: "Widget",
 
     //Layout
+    width: unit*75,
     minWidth: unit*36,
     padding: unit*2,
     spacing: {vertical: unit*1.5, horizontal: unit*2},
@@ -23,11 +24,12 @@ function Widget() {
     //Style
     cornerRadius: unit*1,
     stroke: theme.secondary,
+    strokeWidth: unit*0.125,
     fill: theme.background,
   }
 
   return (
-    <AutoLayout {...widgetStyles}>
+    <AutoLayout {...style}>
       <Title />
       <Actions />
     </AutoLayout>

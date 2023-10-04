@@ -1,10 +1,27 @@
+import Description from "./description";
+import Status from "./status";
+
 const { widget } = figma;
-const { AutoLayout, Text } = widget;
+const { AutoLayout, useSyncedState } = widget;
 
 function Badges() {
+
+    const [unit] = useSyncedState<number>("unit", 0)
+
+    const style : AutoLayoutProps = {
+        //Properties
+        name: "Badges wrapper",
+
+        //Layout
+        width: 'fill-parent',
+        spacing: unit,
+        verticalAlignItems: "center",
+    }
+
     return (
-        <AutoLayout>
-            <Text>Badges</Text>
+        <AutoLayout {...style}>
+            <Status />
+            <Description />
         </AutoLayout>
     )
 }
