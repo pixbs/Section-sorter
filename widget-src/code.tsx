@@ -1,21 +1,35 @@
+import Actions from "./components/actions/actions";
+import Title from "./components/title/title";
+import { theme } from "./types/interfaces";
+import { lightTheme } from "./types/themes";
+
 const { widget } = figma;
-const { AutoLayout, Ellipse, Frame, Image, Rectangle, SVG, Text } = widget;
+const { AutoLayout, useSyncedState } = widget;
 
 function Widget() {
+
+  const [theme] = useSyncedState<theme>("theme", lightTheme)
+  const [unit] = useSyncedState<number>("unit", 8)
+
+  const widgetStyles : AutoLayoutProps = {
+    //Properties
+    name: "Widget",
+
+    //Layout
+    minWidth: unit*36,
+    padding: unit*2,
+    spacing: {vertical: unit*1.5, horizontal: unit*2},
+
+    //Style
+    cornerRadius: unit*1,
+    stroke: theme.secondary,
+    fill: theme.background,
+  }
+
   return (
-    <AutoLayout
-      direction="horizontal"
-      horizontalAlignItems="center"
-      verticalAlignItems="center"
-      height="hug-contents"
-      padding={8}
-      fill="#FFFFFF"
-      cornerRadius={8}
-      spacing={12}
-    >
-      <Text fontSize={32} horizontalAlignText="center">
-        Hello Widgets
-      </Text>
+    <AutoLayout {...widgetStyles}>
+      <Title />
+      <Actions />
     </AutoLayout>
   );
 }
