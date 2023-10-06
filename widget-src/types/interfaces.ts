@@ -10,3 +10,5 @@ export interface theme {
     readonly colorBlue: string
     readonly colorPurple: string
 }
+
+export type direction = 'horizontal' | 'vertical' | 'wrap'

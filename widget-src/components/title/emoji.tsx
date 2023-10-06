@@ -9,6 +9,8 @@ function Emoji() {
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
 
+    const [emoji] = useSyncedState<string>("emoji", '')
+
     const style : TextProps = {
         //Properties
         name: "Emoji",
@@ -17,10 +19,12 @@ function Emoji() {
         fill: theme.primary,
         fontSize: unit*5,
     }
+    
+    if (emoji === '') return
 
     return (
             <Text {...style}>
-                🔬
+                {emoji}
             </Text>
     )
 }

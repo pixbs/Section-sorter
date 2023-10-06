@@ -2,31 +2,24 @@ import { theme } from "../../types/interfaces";
 import { blankTheme } from "../../types/themes";
 
 const { widget } = figma;
-const { AutoLayout, SVG, useSyncedState } = widget;
+const {SVG, useSyncedState } = widget;
 
-interface IconProps {
-    name: string,
-    src: string,
-}
-
-function Icon({name, src} : IconProps) {
+function Icon(props : SVGProps) {
 
     const [unit] = useSyncedState<number>("unit", 0)
 
     const style : SVGProps = {
-        //Properties
-        name: name,
-        src: src,
-
         //Layout
         width: unit*4,
         height: unit*4,
+        
+        ...props,
     }
 
     return <SVG {...style} />
 }
 
-export function LeftIcon() {
+export function LeftIcon(props : Partial<SVGProps>) {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
@@ -37,11 +30,11 @@ export function LeftIcon() {
         </svg>
     `
 
-    return <Icon name="Left icon" src={src} />
+    return <Icon name="Left icon" src={src} {...props}/>
 
 }
 
-export function DownIcon() {
+export function DownIcon(props : Partial<SVGProps>) {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
@@ -52,10 +45,10 @@ export function DownIcon() {
         </svg>
     `
 
-    return <Icon name="Down icon" src={src} />
+    return <Icon name="Down icon" src={src} {...props}/>
 }
 
-export function WrapIcon() {
+export function WrapIcon(props : Partial<SVGProps>) {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
@@ -67,10 +60,10 @@ export function WrapIcon() {
         </svg>
     `
 
-    return <Icon name="Wrap icon" src={src} />
+    return <Icon name="Wrap icon" src={src} {...props}/>
 }
 
-export function GapIcon() {
+export function GapIcon(props : Partial<SVGProps>) {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
@@ -81,10 +74,10 @@ export function GapIcon() {
         </svg>
     `
 
-    return <Icon name="Gap icon" src={src} />
+    return <Icon name="Gap icon" src={src} {...props}/>
 }
 
-export function UpdateIcon() {
+export function UpdateIcon(props : Partial<SVGProps>) {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
@@ -96,5 +89,5 @@ export function UpdateIcon() {
     </svg>
     `
 
-    return <Icon name="Update icon" src={src} />
+    return <Icon name="Update icon" src={src} {...props}/>
 }

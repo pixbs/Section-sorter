@@ -2,22 +2,26 @@ import Actions from "./components/actions/actions";
 import Title from "./components/title/title";
 import { theme } from "./types/interfaces";
 import { lightTheme } from "./types/themes";
+import getParent from "./utils/getParent";
 
 const { widget } = figma;
-const { AutoLayout, useSyncedState } = widget;
+const { AutoLayout, useSyncedState, useEffect, useWidgetNodeId } = widget;
 
 function Widget() {
 
   const [theme] = useSyncedState<theme>("theme", lightTheme)
   const [unit] = useSyncedState<number>("unit", 8)
+  const [width, setWidth] = useSyncedState<number>("width", unit*36)
+  const [,] = useSyncedState<string>("widgetId", useWidgetNodeId())
 
   const style : AutoLayoutProps = {
     //Properties
     name: "Widget",
 
     //Layout
-    width: unit*75,
+    width: width,
     minWidth: unit*36,
+    wrap: true,
     padding: unit*2,
     spacing: {vertical: unit*1.5, horizontal: unit*2},
 
@@ -27,6 +31,8 @@ function Widget() {
     strokeWidth: unit*0.125,
     fill: theme.background,
   }
+
+
 
   return (
     <AutoLayout {...style}>

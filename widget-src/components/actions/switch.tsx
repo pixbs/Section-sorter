@@ -1,6 +1,7 @@
 import { DownIcon, LeftIcon, WrapIcon } from "../icons/icons";
-import { theme } from "../../types/interfaces";
+import { direction, theme } from "../../types/interfaces";
 import { blankTheme } from "../../types/themes";
+import SwitchButton from "./switchButton";
 
 const { widget } = figma;
 const { AutoLayout, useSyncedState } = widget;
@@ -9,7 +10,8 @@ function Switch() {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
-    
+    const [direction, setDirection] = useSyncedState<direction>("switch", "horizontal")
+
     const style : AutoLayoutProps = {
         //Properties
         name: "Switch",
@@ -21,13 +23,38 @@ function Switch() {
         fill: theme.background,
     }
 
-    return (
+    const handleClick = (direction : direction) => {
+        setDirection(direction)
+    }
+
+    const buttons = [
+        { 
+            active : direction === "horizontal",
+            children : <LeftIcon />,
+            tooltip : "Horizontal sort",
+            onClick : () => handleClick("horizontal")
+        },
+        { 
+            active : direction === "vertical",
+            children : <DownIcon />,
+            tooltip : "Vertical sort",
+            onClick : () => handleClick("vertical")
+        },
+        { 
+            active : direction === "wrap",
+            children : <WrapIcon />,
+            tooltip : "Wrap",
+            onClick : () => handleClick("wrap")
+        },
+    ]
+      
+      return (
         <AutoLayout {...style}>
-            <LeftIcon />
-            <DownIcon />
-            <WrapIcon />
+            {buttons.map((button, index) => (
+                <SwitchButton key={index} {...button} />
+            ))}
         </AutoLayout>
-    )
+      )
 }
 
 export default Switch;

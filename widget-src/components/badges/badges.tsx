@@ -15,7 +15,6 @@ function Badges() {
         //Layout
         width: 'fill-parent',
         spacing: unit,
-        verticalAlignItems: "center",
     }
 
     return (

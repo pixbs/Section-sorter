@@ -1,14 +1,44 @@
 import { GapIcon } from "../icons/icons";
-import { theme } from "../../types/interfaces";
+import { direction, theme } from "../../types/interfaces";
 import { blankTheme } from "../../types/themes";
 
 const { widget } = figma;
-const { AutoLayout, Text, useSyncedState, Input } = widget;
+const { AutoLayout, useSyncedState, Input } = widget;
 
 function Gap() {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
+    const [direction] = useSyncedState<direction>("switch", "horizontal")
+    const [gap, setGap] = useSyncedState<number>("gap", 0)
+
+    const directionToRotation = {
+        horizontal: 0,
+        vertical: 90,
+        wrap: 0,
+    }
+
+    const handleTextEdit = (event : TextEditEvent) => {
+        const value = Number(event.characters)
+        if (isNaN(value)) {
+            figma.notify("Gap must be a number")
+            return
+        }
+        if (value < 0) {
+            figma.notify("Gap must be a positive number")
+            return
+        }
+        if (value > 10000) {
+            figma.notify("Gap must be less than 10,000")
+            return
+        }
+        setGap(value)
+    }
+
+    const hoverStyle : BaseProps  = {
+        //Style
+        opacity: 0.5,
+    }
 
     const style : AutoLayoutProps = {
         //Properties
@@ -19,13 +49,20 @@ function Gap() {
         stroke: theme.secondary,
         strokeWidth: unit*0.125,
         fill: theme.background,
+
+        //Action
+        hoverStyle: hoverStyle,
+    }
+
+    const iconStyle : Partial<SVGProps> = {
+        //Layout
+        rotation: directionToRotation[direction],
     }
 
     const inputStyle : InputProps = {
         //Properties
         name: "Gap input",
-        value: "16",
-        placeholder: "Gap",
+        value: gap.toString(),
 
         //Layout
         width: unit*6,
@@ -37,14 +74,13 @@ function Gap() {
         fontSize: unit*1.5,
 
         //Action
-        onTextEditEnd: (e) => {
-            e.characters.trim()
-        },
+        hoverStyle: hoverStyle,
+        onTextEditEnd: handleTextEdit,
     }
 
     return (
         <AutoLayout {...style}>
-            <GapIcon />
+            <GapIcon {...iconStyle}/>
             <Input {...inputStyle} />
         </AutoLayout>
     )

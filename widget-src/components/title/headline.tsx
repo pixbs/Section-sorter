@@ -10,6 +10,8 @@ function Headline() {
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
 
+    const [name] = useSyncedState<string>("name", "")
+
     const parentStyle : AutoLayoutProps = {
         //Properties
         name: "Headline wrapper",
@@ -37,7 +39,7 @@ function Headline() {
     return (
         <AutoLayout {...parentStyle}>
             <Text {...headlineStyle}>
-                Headline
+                {name}
             </Text>
             <Badges />
         </AutoLayout>

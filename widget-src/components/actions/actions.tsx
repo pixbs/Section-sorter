@@ -1,6 +1,6 @@
 import Gap from "./gap";
 import Switch from "./switch";
-import Update from "./update";
+import UpdateButton from "./updateButton";
 
 const { widget } = figma;
 const { AutoLayout, useSyncedState } = widget;
@@ -21,7 +21,7 @@ function Actions() {
         <AutoLayout {...style}>
             <Switch />
             <Gap />
-            <Update />
+            <UpdateButton />
         </AutoLayout>
     )
 }

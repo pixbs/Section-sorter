@@ -8,11 +8,17 @@ function Description() {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
+    const [text, setText] = useSyncedState<string>("description", "")
+
+    const hoverStyle : BaseProps  = {
+        //Style
+        opacity: 0.5,
+    }
 
     const style : InputProps = {
         //Properties
         name: "Description input",
-        value: "Click here to add a description",
+        value: text,
         placeholder: "Click here to add a description",
 
         //Layout
@@ -24,8 +30,9 @@ function Description() {
         fontWeight: 400,
 
         //Action
-        onTextEditEnd: (e) => {
-            e.characters.trim()
+        hoverStyle: hoverStyle,
+        onTextEditEnd: (event) => {
+            setText(event.characters)
         },
     }
 
