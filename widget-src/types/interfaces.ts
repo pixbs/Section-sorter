@@ -11,4 +11,12 @@ export interface theme {
     readonly colorPurple: string
 }
 
+export interface allowedTypes {
+    FRAME: boolean,
+    SECTION: boolean,
+    COMPONENT: boolean,
+    INSTANCE: boolean,
+    GROUP: boolean,
+}
+
 export type direction = 'horizontal' | 'vertical' | 'wrap'

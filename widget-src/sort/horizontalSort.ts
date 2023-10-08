@@ -1,10 +1,15 @@
-const { widget } = figma;
+function horizontalSort(
+    children : SceneNode[],
+    gap: number,
+) { 
+    var x = gap;
+    const y = gap;
 
-function horizontalSort(widgetId: string) {
-    const widget = figma.getNodeById(widgetId);
-    if (!widget) throw new Error('Widget not found');
-    const parent = widget.parent;
-    if (!parent) throw new Error('Parent not found');
-    const children = parent.children;
-    if (!children) throw new Error('Children not found');
+    for(const child of children) {
+        child.y = y
+        child.x = x;
+        x += child.width + gap;
+    }
 }
+
+export default horizontalSort;

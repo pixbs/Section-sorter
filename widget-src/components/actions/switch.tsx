@@ -12,7 +12,7 @@ function Switch() {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
-    const [direction, setDirection] = useSyncedState<direction>("switch", "horizontal")
+    const [direction, setDirection] = useSyncedState<direction>("direction", "horizontal")
 
     const style : AutoLayoutProps = {
         //Properties

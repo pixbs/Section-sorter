@@ -1,3 +1,4 @@
+import { allowedTypes } from "../../types/interfaces";
 import { darkTheme, lightTheme } from "../../types/themes";
 import updateName from "../../utils/updateName";
 import updateProperties from "../../utils/updateProperties";
@@ -13,13 +14,12 @@ function propertyMenu() {
     const [displayDescription, setDisplayDescription] = useSyncedState('display-description', true);
     const [displayEmoji, setDisplayEmoji] = useSyncedState('display-emoji', true);
 
-    const [sortTypes, setSortTypes] = useSyncedState('sort-types', {
+    const [sortTypes, setSortTypes] = useSyncedState<allowedTypes>('sort-types', {
         FRAME: true,
         SECTION: true,
         COMPONENT: true,
         INSTANCE: false,
         GROUP: false,
-        Other: false,
     });
     const sortTypesNum = Object.keys(sortTypes).filter((key) => sortTypes[key as keyof typeof sortTypes]).length;
 
@@ -88,9 +88,6 @@ function propertyMenu() {
         },{
             option: 'GROUP',
             label: `${sortTypes.GROUP ? '✅':'❌'} Group`,
-        },{
-            option: 'Other',
-            label: `${sortTypes.Other ? '✅':'❌'} Other`,
         }
     ]
 
@@ -232,9 +229,6 @@ function propertyMenu() {
             case "GROUP":
                 setSortTypes({...sortTypes, GROUP: !sortTypes.GROUP});
                 break;
-            case "Other":
-                setSortTypes({...sortTypes, Other: !sortTypes.Other});
-                break;
         }
     }
 
@@ -245,7 +239,6 @@ function propertyMenu() {
             COMPONENT: value,
             INSTANCE: value,
             GROUP: value,
-            Other: value,
         })
     }
 }
