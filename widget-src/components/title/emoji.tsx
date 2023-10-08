@@ -5,6 +5,8 @@ const { widget } = figma;
 const { Text, useSyncedState } = widget;
 
 function Emoji() {
+    const [displayEmoji] = useSyncedState<boolean>("display-emoji", true)
+    if (!displayEmoji) return null
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)

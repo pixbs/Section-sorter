@@ -5,6 +5,9 @@ const { widget } = figma;
 const { AutoLayout, useSyncedState } = widget;
 
 function Badges() {
+    const [displayStatus] = useSyncedState<boolean>("display-status", true)
+    const [displayDescription] = useSyncedState<boolean>("display-description", true)
+    if (!displayStatus && !displayDescription) return null
 
     const [unit] = useSyncedState<number>("unit", 0)
 

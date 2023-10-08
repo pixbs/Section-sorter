@@ -6,6 +6,8 @@ const { widget } = figma;
 const { AutoLayout, Text, useSyncedState } = widget;
 
 function Status() {
+    const [display] = useSyncedState<boolean>("display-status", true)
+    if (!display) return null
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)

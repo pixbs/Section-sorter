@@ -1,4 +1,3 @@
-import Badges from "../badges/badges";
 import { theme } from "../../types/interfaces";
 import { blankTheme } from "../../types/themes";
 
@@ -6,24 +5,18 @@ const { widget } = figma;
 const { AutoLayout, Text, useSyncedState } = widget;
 
 function Headline() {
+    const [displayTitle] = useSyncedState<boolean>("display-title", true)
+    if (!displayTitle) return null
+
+    const [displayEmoji] = useSyncedState<boolean>("display-emoji", false)
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
 
+    const [emojiName] = useSyncedState<string>("emoji-name", "Press update \nto get started")
     const [name] = useSyncedState<string>("name", "")
 
-    const parentStyle : AutoLayoutProps = {
-        //Properties
-        name: "Headline wrapper",
-
-        //Layout
-        minWidth: unit*32,
-        direction: "vertical",
-        spacing: unit,
-        width: 'fill-parent',
-    }
-
-    const headlineStyle : TextProps = {
+    const style : TextProps = {
         //Properties
         name: "Main screens",
 
@@ -37,12 +30,9 @@ function Headline() {
     }
 
     return (
-        <AutoLayout {...parentStyle}>
-            <Text {...headlineStyle}>
-                {name}
-            </Text>
-            <Badges />
-        </AutoLayout>
+        <Text {...style}>
+            {displayEmoji ? emojiName : name}
+        </Text>
     )
 }
 

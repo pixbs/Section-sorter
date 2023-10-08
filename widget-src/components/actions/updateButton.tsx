@@ -13,9 +13,12 @@ function UpdateButton() {
     const [unit] = useSyncedState<number>("unit", 0)
 
     const [widgetId] = useSyncedState<string>("widgetId", "")
+    const [,setEmojiName] = useSyncedState<string>("emoji-name", "")
     const [,setName] = useSyncedState<string>("name", "")
     const [,setEmoji] = useSyncedState<string>("emoji", '')
     const [,setWidth] = useSyncedState<number>("width", 0)
+
+    
 
     const hoverStyle : BaseProps  = {
         //Style
@@ -23,8 +26,8 @@ function UpdateButton() {
     }
 
     const Update = () => {
-        updateName(widgetId, setName, setEmoji)
-        updateProperties(widgetId,setWidth,unit)
+        updateProperties(widgetId, setWidth, unit)
+        updateName(widgetId, setName, setEmojiName, setEmoji)
     }
 
     const style : AutoLayoutProps = {

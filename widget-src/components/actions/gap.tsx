@@ -6,11 +6,13 @@ const { widget } = figma;
 const { AutoLayout, useSyncedState, Input } = widget;
 
 function Gap() {
+    const [display] = useSyncedState<boolean>("display-actions", true)
+    if (!display) return null
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
     const [direction] = useSyncedState<direction>("switch", "horizontal")
-    const [gap, setGap] = useSyncedState<number>("gap", 0)
+    const [gap, setGap] = useSyncedState<number>("gap", 16)
 
     const directionToRotation = {
         horizontal: 0,

@@ -1,14 +1,14 @@
 import Emoji from "./emoji";
-import Headline from "./headline";
+import HeadlineWrapper from "./headlineWrapper";
 
 const { widget } = figma;
-const { AutoLayout, Text } = widget;
+const { useSyncedState } = widget;
 
 function Title() {
     return (
         <>
             <Emoji />
-            <Headline />
+            <HeadlineWrapper />
         </>
     )
 }

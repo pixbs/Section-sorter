@@ -5,6 +5,8 @@ const { widget } = figma;
 const { Input, useSyncedState } = widget;
 
 function Description() {
+    const [display] = useSyncedState<boolean>("display-description", true)
+    if (!display) return null
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)

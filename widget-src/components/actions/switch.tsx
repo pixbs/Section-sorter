@@ -7,6 +7,8 @@ const { widget } = figma;
 const { AutoLayout, useSyncedState } = widget;
 
 function Switch() {
+    const [display] = useSyncedState<boolean>("display-actions", true)
+    if (!display) return null
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
