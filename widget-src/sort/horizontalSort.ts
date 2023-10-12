@@ -2,8 +2,8 @@ function horizontalSort(
     children : SceneNode[],
     gap: number,
 ) { 
-    var x = gap;
-    const y = gap;
+    var x = 0;
+    const y = 0;
 
     for(const child of children) {
         child.y = y

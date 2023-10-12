@@ -14,7 +14,6 @@ interface switchButtonProps {
 function SwitchButton({active, children, tooltip,onClick}: switchButtonProps) {
 
     const [theme] = useSyncedState<theme>("theme", blankTheme)
-    const [unit] = useSyncedState<number>("unit", 0)
 
     const hoverStyle : AutoLayoutProps = {
         //Style

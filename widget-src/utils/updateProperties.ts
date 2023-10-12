@@ -1,13 +1,14 @@
+import Gap from "../components/actions/gap";
 import getParent from "./getParent";
 
 function updateProperties(
-    widgetId: string,
+    widget : WidgetNode,
+    parent : BaseNode,
+    children : Array<SceneNode>,
     setWidth: (width: number) => void,
     unit : number,
+    gap : number,
 ) {
-    const widget = figma.getNodeById(widgetId); 
-    if (!widget) throw new Error('Widget not found');
-    const parent = getParent(widgetId);
 
     switch (parent.type) {
         case "SECTION":
@@ -25,6 +26,8 @@ function updateProperties(
                 parent as PageNode,
                 setWidth,
                 unit,
+                gap,
+                children,
             );
             break;
     }
@@ -36,7 +39,8 @@ function updateScene(
     setWidth: (width: number) => void,
     unit : number,
 ) {
-    setWidth(parent.width - unit*2);
+    const width = Math.max(parent.width - unit*2, unit*36);
+    setWidth(width);
     widget.y = unit;
     widget.x = unit;
 }
@@ -46,10 +50,13 @@ function updatePage(
     parent : PageNode,
     setWidth: (width: number) => void,
     unit : number,
+    gap : number,
+    children : Array<SceneNode>,
 ) {
-    setWidth(unit*36);
-    widget.y = 0;
-    widget.x = - (widget.height + unit*2);
+    const maxX = Math.max(...children.map(child => child.x + child.width), unit*36);
+    setWidth(maxX);
+    widget.y = - (widget.height + gap)
+    widget.x = 0
 }
 
 export default updateProperties;

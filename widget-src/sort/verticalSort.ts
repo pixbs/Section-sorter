@@ -2,8 +2,8 @@ function verticalSort(
     children : SceneNode[],
     gap: number,
 ){
-    const x = gap;
-    var y = gap;
+    const x = 0;
+    var y = 0;
 
     for (const child of children) {
         child.x = x;

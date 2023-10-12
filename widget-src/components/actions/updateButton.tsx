@@ -2,12 +2,10 @@ import { UpdateIcon } from "../icons/icons";
 import { allowedTypes, direction, theme } from "../../types/interfaces";
 import { blankTheme } from "../../types/themes";
 import updateName from "../../utils/updateName";
-import updateProperties from "../../utils/updateProperties";
-import sort from "../../sort/sort";
-import wrapParent from "../../utils/wrapParent";
+import update from "../../utils/update";
 
 const { widget } = figma;
-const { AutoLayout, useSyncedState } = widget;
+const { AutoLayout, useSyncedState, useEffect } = widget;
 
 function UpdateButton() {
 
@@ -31,12 +29,20 @@ function UpdateButton() {
     }
 
     const Update = () => {
-        updateProperties(widgetId, setWidth, unit)
-        updateName(widgetId, setName, setEmojiName, setEmoji)
-        sort(direction, widgetId, allowedTypes, unit, gap)
-        if (direction != "wrap") {
-            wrapParent(widgetId, allowedTypes, gap)
-        }
+        updateName(
+            widgetId, 
+            setName, 
+            setEmojiName, 
+            setEmoji
+        )
+        update(
+            widgetId, 
+            allowedTypes, 
+            direction,
+            unit, 
+            gap,
+            setWidth
+        )
     }
 
     const style : AutoLayoutProps = {
@@ -52,7 +58,6 @@ function UpdateButton() {
         //Action
         hoverStyle: hoverStyle,
         onClick: Update,
-
     }
 
     return (

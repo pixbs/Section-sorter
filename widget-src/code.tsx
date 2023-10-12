@@ -5,9 +5,14 @@ import { theme } from "./types/interfaces";
 import { lightTheme } from "./types/themes";
 
 const { widget } = figma;
-const { AutoLayout, useSyncedState, useEffect, useWidgetNodeId } = widget;
+const { AutoLayout, useSyncedState, useWidgetNodeId } = widget;
 
-function Widget() {
+function Widget() { 
+
+  useSyncedState<number>("gap", 16)
+  const title = "Press update \nto get started"
+  useSyncedState<string>("emoji-name", title)
+  useSyncedState<string>("name", title)
 
   const [theme] = useSyncedState<theme>("theme", lightTheme)
   const [unit] = useSyncedState<number>("unit", 8)
@@ -20,8 +25,8 @@ function Widget() {
   const [displayActions] = useSyncedState('display-actions', true);
   const [displayEmoji] = useSyncedState('display-emoji', true);
 
-  const display = displayTitle || displayStatus || displayDescription
-  const displayPadding = display || displayActions || displayEmoji
+  const displayOff = !(displayTitle || displayStatus || displayDescription || displayActions || displayEmoji)
+  const display = (displayTitle || displayStatus || displayDescription) || displayOff
 
   propertyMenu()
 
@@ -31,8 +36,9 @@ function Widget() {
 
     //Layout
     width: display ? width : 'hug-contents',
+    height: displayOff ? unit*2 : 'hug-contents',
     wrap: true,
-    padding: displayPadding ? unit*2 : 0,
+    padding: unit*2,
     spacing: {vertical: unit*1.5, horizontal: unit*2},
 
     //Style

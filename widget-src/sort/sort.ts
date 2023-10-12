@@ -4,20 +4,11 @@ import verticalSort from "./verticalSort";
 import wrapSort from "./wrapSort";
 
 function sort(
+    parent: BaseNode,
+    children: SceneNode[],
     direction: direction,
-    widgetId: string,
-    allowedTypes: string[],
-    unit : number,
     gap: number,
 ){
-    const widget = figma.getNodeById(widgetId) as WidgetNode;
-    if (!widget) throw new Error('Widget not found');
-    const parent = widget.parent; 
-    if (!parent) throw new Error('Parent not found');
-    var children = parent.children as SceneNode[];
-    if (!children) throw new Error('Children not found');
-
-    children = children.filter(child => allowedTypes.includes(child.type));
     children = children.reverse();
 
     switch (direction) {

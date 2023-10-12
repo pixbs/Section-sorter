@@ -1,12 +1,23 @@
-import { allowedTypes } from "../../types/interfaces";
+import { allowedTypes, direction } from "../../types/interfaces";
 import { darkTheme, lightTheme } from "../../types/themes";
+import update from "../../utils/update";
 import updateName from "../../utils/updateName";
-import updateProperties from "../../utils/updateProperties";
 
 const { widget } = figma;
 const { usePropertyMenu, useSyncedState } = widget;
 
 function propertyMenu() {
+
+    const UpdateIconSrc = `
+    <svg width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.328 16.021a5.31 5.31 0 0 1-1.557 3.75 5.333 5.333 0 0 1-8.453-1.22m-.648-2.638a5.313 5.313 0 0 1 1.559-3.684 5.335 5.335 0 0 1 8.453 1.22" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18.635 13.45h2.357v-2.357m-7.627 7.457h-2.357v2.357" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    `
+
+    const [,setEmojiName] = useSyncedState<string>("emoji-name", "")
+    const [,setName] = useSyncedState<string>("name", "")
+    const [,setEmoji] = useSyncedState<string>("emoji", '')
 
     const [displayTitle, setDisplayTitle] = useSyncedState('display-title', true);
     const [displayActions, setDisplayActions] = useSyncedState('display-actions', true);
@@ -22,9 +33,12 @@ function propertyMenu() {
         GROUP: false,
     });
     const sortTypesNum = Object.keys(sortTypes).filter((key) => sortTypes[key as keyof typeof sortTypes]).length;
+    const allowedTypes = Object.keys(sortTypes).filter((key) => sortTypes[key as keyof typeof sortTypes] === true)
 
     const [widgetId] = useSyncedState<string>("widgetId", "")
     const [,setWidth] = useSyncedState<number>("width", 0)
+    const [gap] = useSyncedState<number>("gap", 0)
+    const [direction] = useSyncedState<direction>("direction", "horizontal")
 
     const [theme, setTheme] = useSyncedState('theme', lightTheme);
     const [themeName, setThemeName] = useSyncedState('theme-name', 'light');
@@ -50,44 +64,44 @@ function propertyMenu() {
     const displayOptions : WidgetPropertyMenuDropdownOption[] = [
         {
             option: showNum > 2 ? 'none' : 'all',
-            label: showNum > 2 ? '❌ Select none' : '✅ Select all',
+            label: showNum > 2 ? '✗ Select none' : '✓ Select all',
         },{
             option: 'actions',
-            label: `${displayActions ? '✅':'❌'} Actions`,
+            label: `${displayActions ? '✓':'✗'} Actions`,
         },{
             option: 'title',
-            label:  `${displayTitle ? '✅':'❌'} Title`,
+            label:  `${displayTitle ? '✓':'✗'} Title`,
         },{
             option: 'emoji',
-            label: ` ${displayEmoji ? '✅':'❌'} Emojis`,
+            label: ` ${displayEmoji ? '✓':'✗'} Emojis`,
         },{
             option: 'status',
-            label: ` ${displayStatus ? '✅':'❌'} Status`,
+            label: ` ${displayStatus ? '✓':'✗'} Status`,
         },{
             option: 'description',
-            label: ` ${displayDescription ? '✅':'❌'} Description`,
+            label: ` ${displayDescription ? '✓':'✗'} Description`,
         }
     ]
 
     const sortOptions : WidgetPropertyMenuDropdownOption[] = [
         {
             option: sortTypesNum > 3 ? 'none' : 'all',
-            label: sortTypesNum > 3 ? '❌ Select none' : '✅ Select all',
+            label: sortTypesNum > 3 ? '✗ Select none' : '✓ Select all',
         },{
             option: 'FRAME',
-            label: `${sortTypes.FRAME ? '✅':'❌'} Frame`,
+            label: `${sortTypes.FRAME ? '✓':'✗'} Frame`,
         },{
             option: 'SECTION',
-            label: `${sortTypes.SECTION ? '✅':'❌'} Section`,
+            label: `${sortTypes.SECTION ? '✓':'✗'} Section`,
         },{
             option: 'COMPONENT',
-            label: `${sortTypes.COMPONENT ? '✅':'❌'} Component`,
+            label: `${sortTypes.COMPONENT ? '✓':'✗'} Component`,
         },{
             option: 'INSTANCE',
-            label: `${sortTypes.INSTANCE ? '✅':'❌'} Instance`,
+            label: `${sortTypes.INSTANCE ? '✓':'✗'} Instance`,
         },{
             option: 'GROUP',
-            label: `${sortTypes.GROUP ? '✅':'❌'} Group`,
+            label: `${sortTypes.GROUP ? '✓':'✗'} Group`,
         }
     ]
 
@@ -144,31 +158,44 @@ function propertyMenu() {
             propertyName: 'size',
             options: sizeOptions,
             selectedOption: unitName,
+        }, {
+            itemType: 'separator'
+        }, {
+            itemType: 'action',
+            tooltip: 'Update widget',
+            propertyName: 'update',
+            icon: UpdateIconSrc,
         }
     ]
 
     usePropertyMenu(
         propertyMenuItems,
         ({ propertyName, propertyValue }) => {
-            if (!propertyValue) return;
             switch (propertyName) {
                 case "display":
+                    if (!propertyValue) return;
                     updateDisplay(propertyValue);
                     break;
                 case "theme":
                     setTheme(themes[propertyValue as keyof typeof themes]);
+                    if (!propertyValue) return;
                     setThemeName(propertyValue);
                     break;
                 case "size":
-                    setUnit(sizes[propertyValue as keyof typeof sizes]);
+                    const newSize = sizes[propertyValue as keyof typeof sizes];
+                    if (!propertyValue) return;
+                    setUnit(newSize);
                     setUnitName(propertyValue);
-                    updateProperties(widgetId, setWidth, unit)
-                    updateProperties(widgetId, setWidth, unit)
                     break;
                 case "sort":
                     updateSort(propertyValue);
                     break;
+                case "update":
+                    update(widgetId, allowedTypes, direction, unit, gap, setWidth);
+                    updateName(widgetId, setName, setEmojiName, setEmoji)
+                    break;
             }
+            update(widgetId, allowedTypes, direction, unit, gap, setWidth);
         }
     )
 

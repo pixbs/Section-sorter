@@ -3,22 +3,21 @@ function wrapSort(
     gap: number,
     width: number,
 ) {
-    var x = gap;
-    var y = gap;
+    var x = 0;
+    var y = 0;
     var maxY = 0;
 
-    for (const child of children) {
-        if (child.height > maxY) {
-            maxY = child.height
-        };
-        if (x + child.width + gap > width) {
-            x = gap;
+    children.forEach(child => {
+        if (x + child.width > width) {
+            x = 0;
             y += maxY + gap;
+            maxY = 0;
         }
         child.x = x;
         child.y = y;
         x += child.width + gap;
-    }
+        if (child.height > maxY) maxY = child.height;
+    });
 }
 
 export default wrapSort;
