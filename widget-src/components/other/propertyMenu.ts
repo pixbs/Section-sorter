@@ -4,7 +4,7 @@ import update from "../../utils/update";
 import updateName from "../../utils/updateName";
 
 const { widget } = figma;
-const { usePropertyMenu, useSyncedState } = widget;
+const { usePropertyMenu, useSyncedState, useWidgetNodeId} = widget;
 
 function propertyMenu() {
 
@@ -29,13 +29,14 @@ function propertyMenu() {
         FRAME: true,
         SECTION: true,
         COMPONENT: true,
+        COMPONENT_SET: true,
         INSTANCE: false,
         GROUP: false,
     });
     const sortTypesNum = Object.keys(sortTypes).filter((key) => sortTypes[key as keyof typeof sortTypes]).length;
     const allowedTypes = Object.keys(sortTypes).filter((key) => sortTypes[key as keyof typeof sortTypes] === true)
 
-    const [widgetId] = useSyncedState<string>("widgetId", "")
+    const widgetId = useWidgetNodeId()
     const [,setWidth] = useSyncedState<number>("width", 0)
     const [gap] = useSyncedState<number>("gap", 0)
     const [direction] = useSyncedState<direction>("direction", "horizontal")
@@ -248,7 +249,7 @@ function propertyMenu() {
                 setSortTypes({...sortTypes, SECTION: !sortTypes.SECTION});
                 break;
             case "COMPONENT":
-                setSortTypes({...sortTypes, COMPONENT: !sortTypes.COMPONENT});
+                setSortTypes({...sortTypes, COMPONENT: !sortTypes.COMPONENT, COMPONENT_SET: !sortTypes.COMPONENT_SET});
                 break;
             case "INSTANCE":
                 setSortTypes({...sortTypes, INSTANCE: !sortTypes.INSTANCE});
@@ -264,6 +265,7 @@ function propertyMenu() {
             FRAME: value,
             SECTION: value,
             COMPONENT: value,
+            COMPONENT_SET: value,
             INSTANCE: value,
             GROUP: value,
         })

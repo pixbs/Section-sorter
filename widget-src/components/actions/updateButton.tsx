@@ -5,7 +5,7 @@ import updateName from "../../utils/updateName";
 import update from "../../utils/update";
 
 const { widget } = figma;
-const { AutoLayout, useSyncedState, useEffect } = widget;
+const { AutoLayout, useSyncedState, useEffect, useWidgetNodeId } = widget;
 
 function UpdateButton() {
 
@@ -13,7 +13,7 @@ function UpdateButton() {
     const [unit] = useSyncedState<number>("unit", 0)
     const [gap] = useSyncedState<number>("gap", 0)
 
-    const [widgetId] = useSyncedState<string>("widgetId", "")
+    const widgetId = useWidgetNodeId()
     const [,setEmojiName] = useSyncedState<string>("emoji-name", "")
     const [,setName] = useSyncedState<string>("name", "")
     const [,setEmoji] = useSyncedState<string>("emoji", '')

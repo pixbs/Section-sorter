@@ -3,7 +3,7 @@ import { blankTheme } from "../../types/themes";
 import getParent from "../../utils/getParent";
 
 const { widget } = figma;
-const { AutoLayout, Text, useSyncedState } = widget;
+const { AutoLayout, Text, useSyncedState, useWidgetNodeId } = widget;
 
 function Status() {
     const [display] = useSyncedState<boolean>("display-status", true)
@@ -12,7 +12,7 @@ function Status() {
     const [theme] = useSyncedState<theme>("theme", blankTheme)
     const [unit] = useSyncedState<number>("unit", 0)
     const [status, setStatus] = useSyncedState<number>("status", 0)
-    const [widgetId] = useSyncedState<string>("widgetId", '')
+    const widgetId = useWidgetNodeId()
 
     const statuses = [
         {

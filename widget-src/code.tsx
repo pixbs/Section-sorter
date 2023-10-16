@@ -5,7 +5,7 @@ import { theme } from "./types/interfaces";
 import { lightTheme } from "./types/themes";
 
 const { widget } = figma;
-const { AutoLayout, useSyncedState, useWidgetNodeId } = widget;
+const { AutoLayout, useSyncedState } = widget;
 
 function Widget() { 
 
@@ -17,7 +17,6 @@ function Widget() {
   const [theme] = useSyncedState<theme>("theme", lightTheme)
   const [unit] = useSyncedState<number>("unit", 8)
   const [width] = useSyncedState<number>("width", unit*36)
-  const [,] = useSyncedState<string>("widgetId", useWidgetNodeId())
 
   const [displayTitle] = useSyncedState('display-title', true);
   const [displayStatus] = useSyncedState('display-status', true);

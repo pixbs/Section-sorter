@@ -4,12 +4,11 @@ function moveChildren(
     children: Array<SceneNode>,
     gap: number = 0,
 ) {
+    if(parent?.type === "PAGE") return;
     children.forEach(child => {
         const unit = widget.x;
-        child.y += gap;
-        if(parent?.type === "PAGE") return;
         child.x += gap;
-        child.y += widget.height + unit;
+        child.y += widget.height + unit + gap;
     });
 }
 

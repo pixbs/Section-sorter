@@ -15,6 +15,7 @@ export interface allowedTypes {
     FRAME: boolean,
     SECTION: boolean,
     COMPONENT: boolean,
+    COMPONENT_SET: boolean,
     INSTANCE: boolean,
     GROUP: boolean,
 }
